@@ -1,0 +1,60 @@
+package com.max.littlebank.controller;
+
+import com.max.littlebank.exeption_handing.NoSuchUserException;
+import com.max.littlebank.models.User;
+import com.max.littlebank.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * @author Serov Maxim
+ */
+@RestController
+@RequestMapping("/admins")
+public class AdminController {
+
+    private final UserService userService;
+
+    @Autowired
+    public AdminController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public List<User> showAllUsers() {
+        return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public User showUser(@PathVariable long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            throw new NoSuchUserException("There is no user with id = " + id + " in DataBase");
+        }
+        return userService.findById(id);
+    }
+
+    @PostMapping
+    public User addUser(@RequestBody User user) {
+        userService.saveUser(user);
+        return user;
+    }
+
+    @PutMapping
+    public User updateUser(@RequestBody User user) {
+        userService.saveUser(user);
+        return user;
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            throw new NoSuchUserException("There is no user with id = " + id + " in DataBase");
+        }
+        userService.deleteUser(id);
+        return "User with id = " + id + " was deleted";
+    }
+}
