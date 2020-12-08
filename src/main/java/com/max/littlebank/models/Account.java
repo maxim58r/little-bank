@@ -31,11 +31,11 @@ public class Account {
     private Date validityPeriod;
 
     @ManyToOne
-    @Column(name = "owner", nullable = false)
-    private User user;
+    @JoinColumn(name = "owner", nullable = false)
+    private User owner;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "account")
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "account")
     private List<Transaction> transactions ;
 
 

@@ -27,5 +27,6 @@ public class Transaction {
     private Date dateTime;
 
     @ManyToOne
+    @JoinColumn(name = "account", nullable = false)
     private Account account;
 }

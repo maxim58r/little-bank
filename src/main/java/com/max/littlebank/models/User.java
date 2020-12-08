@@ -28,7 +28,7 @@ public class User {
     private String email;
 
     @Column(name = "phone", nullable = false)
-    private int phone;
+    private String phone;
 
     @Column(name = "address", nullable = false)
     private String address;
@@ -36,6 +36,7 @@ public class User {
     @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "owner")
     private List<Account> accounts;
 }
