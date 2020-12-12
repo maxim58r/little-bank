@@ -28,12 +28,21 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public User showUser(@PathVariable long id) {
+    public User showUserById(@PathVariable long id) {
         User user = userService.findById(id);
         if (user == null) {
             throw new NoSuchUserException("There is no user with id = " + id + " in DataBase");
         }
         return userService.findById(id);
+    }
+
+    @GetMapping("/phone/{number}")
+    public User showUserByPhone(@PathVariable String number) {
+        User user = userService.findByPhone(number);
+        if (user == null) {
+            throw new NoSuchUserException("There is no user with phone = " + number + " in DataBase");
+        }
+        return userService.findByPhone(number);
     }
 
     @PostMapping

@@ -1,9 +1,14 @@
 package com.max.littlebank.models;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +16,9 @@ import java.util.List;
  * @author Serov Maxim
  */
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {
@@ -20,6 +27,10 @@ public class User {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Lob
+    @Column(name = "image")
+    private Blob image;
 
     @Column(name = "fullname", nullable = false)
     private String fullname;
@@ -37,6 +48,6 @@ public class User {
     private Date dateOfBirth;
 
     @OneToMany(cascade = CascadeType.ALL,
-            mappedBy = "owner")
-    private List<Account> accounts;
+            mappedBy = "user")
+    private List<Account> accounts = new ArrayList<>();
 }

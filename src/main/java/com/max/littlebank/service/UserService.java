@@ -10,6 +10,12 @@ public interface UserService {
 
     User findById(long id);
 
+    User findByPhone(String numberPhone);
+
+    User findByUsername(String username);
+
+    User findByEmail(String email);
+
     void deleteUser(long id);
 
     List<User> findAll();
