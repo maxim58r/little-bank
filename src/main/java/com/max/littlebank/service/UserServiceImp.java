@@ -2,9 +2,7 @@ package com.max.littlebank.service;
 
 import com.max.littlebank.dao.UserDaoJpa;
 import com.max.littlebank.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +10,11 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService {
 
-    @Autowired
-    private UserDaoJpa userDaoJpa;
+    private final  UserDaoJpa userDaoJpa;
+
+    public UserServiceImp(UserDaoJpa userDaoJpa) {
+        this.userDaoJpa = userDaoJpa;
+    }
 
     @Override
     public void saveUser(User user) {
@@ -36,13 +37,13 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return null;
+    public User findByFullname(String fullname) {
+        return userDaoJpa.findByFullname(fullname);
     }
 
     @Override
     public User findByEmail(String email) {
-        return null;
+        return userDaoJpa.findByEmail(email);
     }
 
 

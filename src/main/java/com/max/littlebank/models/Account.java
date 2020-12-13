@@ -1,6 +1,7 @@
 package com.max.littlebank.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,9 @@ import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +28,7 @@ import java.util.List;
 @Entity
 @Table(name = "accounts")
 public class Account {
+    private Calendar calendar = Calendar.getInstance();
 
     @Id
     @Column(name = "account_number")
@@ -46,12 +50,28 @@ public class Account {
     private Date validityPeriod;
 
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner", nullable = false)
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL,
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
             mappedBy = "account")
     private List<Transaction> transactions = new ArrayList<>();
 
+//    public Date getOpeningDate() {
+//        return openingDate;
+//    }
+//
+//    public void setOpeningDate() {
+//        this.openingDate = calendar.getTime();
+//    }
+//
+//    public Date getValidityPeriod() {
+//        return validityPeriod;
+//    }
+//
+//    public void setValidityPeriod() {
+//      calendar.add(Calendar.YEAR, 4);
+//      this.validityPeriod = calendar.getTime();
+//    }
 }

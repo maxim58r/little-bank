@@ -1,6 +1,5 @@
 package com.max.littlebank.service;
 
-
 import com.max.littlebank.models.User;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface UserService {
 
     User findByPhone(String numberPhone);
 
-    User findByUsername(String username);
+    User findByFullname(String username);
 
     User findByEmail(String email);
 

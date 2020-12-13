@@ -1,7 +1,11 @@
 package com.max.littlebank.controller;
 
 import com.max.littlebank.exeption_handing.NoSuchUserException;
+import com.max.littlebank.models.Account;
+import com.max.littlebank.models.Transaction;
 import com.max.littlebank.models.User;
+import com.max.littlebank.service.AccountService;
+import com.max.littlebank.service.AccountServiceImpl;
 import com.max.littlebank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +16,11 @@ import java.util.List;
  * @author Serov Maxim
  */
 @RestController
-@RequestMapping("/admins")
-public class AdminController {
-
+@RequestMapping("/user")
+public class UserController {
     private final UserService userService;
 
-    @Autowired
-    public AdminController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 

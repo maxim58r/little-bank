@@ -47,7 +47,8 @@ public class User {
     @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
 
-    @OneToMany(cascade = CascadeType.ALL,
+    @OneToMany
+            (cascade = CascadeType.ALL,
             mappedBy = "user")
     private List<Account> accounts = new ArrayList<>();
 }
