@@ -2,6 +2,7 @@ package com.max.littlebank.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.max.littlebank.local_date_converter.LocalDateConverter;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,7 +31,6 @@ import java.util.List;
 @Entity
 @Table(name = "accounts")
 public class Account {
-    private Calendar calendar = Calendar.getInstance();
 
     @Id
     @Column(name = "account_number")
@@ -38,40 +40,37 @@ public class Account {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "opening_date",
-//            insertable = false,
-            updatable = false)
-    @CreationTimestamp
-//    @Generated(GenerationTime.INSERT)
-    private Date openingDate;
+    //    @Convert(converter = LocalDateConverter.class)
+    @Generated(GenerationTime.INSERT)
+    @Column(name = "opening_date", updatable = false)
+    private LocalDateTime openingDate;
 
+//    @Convert(converter = LocalDateConverter.class)
     @Column(name = "validity_period")
-    private Date validityPeriod;
+    private LocalDateTime validityPeriod;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "owner", nullable = false)
-    private User user;
+    private User owner;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,
-            mappedBy = "account")
-    private List<Transaction> transactions = new ArrayList<>();
-
-//    public Date getOpeningDate() {
+    public Account(BigDecimal amount) {
+        this.amount = amount;
+    }
+//
+//    public LocalDate getOpeningDate() {
 //        return openingDate;
 //    }
 //
-//    public void setOpeningDate() {
-//        this.openingDate = calendar.getTime();
+//    public void setOpeningDate(LocalDate openingDate) {
+//        this.openingDate = openingDate;
 //    }
 //
-//    public Date getValidityPeriod() {
+//    public LocalDate getValidityPeriod() {
 //        return validityPeriod;
 //    }
 //
 //    public void setValidityPeriod() {
-//      calendar.add(Calendar.YEAR, 4);
-//      this.validityPeriod = calendar.getTime();
+//        LocalDate localDates = LocalDate.now();
+//        this.validityPeriod = localDates.plusYears(4);
 //    }
 }

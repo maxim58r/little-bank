@@ -5,8 +5,8 @@ import com.max.littlebank.models.Transaction;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Serov Maxim
@@ -14,9 +14,7 @@ import java.util.Date;
 @Service
 public class TransactionServiceImpl implements TransactionService {
     private final TransactionDaoJpa transactionDaoJpa;
-
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy'T'HH:mm");
-
+//    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public TransactionServiceImpl(TransactionDaoJpa transactionDaoJpa) {
         this.transactionDaoJpa = transactionDaoJpa;
@@ -32,12 +30,16 @@ public class TransactionServiceImpl implements TransactionService {
         transactionDaoJpa.delete(transaction);
     }
 
+    public List<Transaction> showAllTransactions() {
+       return transactionDaoJpa.findAll();
+    }
+
     @SneakyThrows
     @Override
-    public Transaction findByTransactionBetweenDate(String startDate, String endDate) {
-        Date simpleStartDate = simpleDateFormat.parse(startDate);
-        Date simpleEndDate = simpleDateFormat.parse(endDate);
-        return transactionDaoJpa.findByDateTimeBetween(simpleStartDate,
-                simpleEndDate);
+    public List<Transaction> findByTransactionBetweenDate(String startDate, String endDate) {
+        LocalDateTime localStartDate = LocalDateTime.parse(startDate);
+        LocalDateTime localEndDate = LocalDateTime.parse(endDate);
+        return transactionDaoJpa.findByDateTimeBetween(localStartDate,
+                localEndDate);
     }
 }

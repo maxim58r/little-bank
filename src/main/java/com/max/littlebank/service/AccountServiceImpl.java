@@ -6,6 +6,7 @@ import com.max.littlebank.models.Account;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-    private final  AccountDaoJpa accountDaoJpa;
+    private final AccountDaoJpa accountDaoJpa;
 
     public AccountServiceImpl(AccountDaoJpa accountDaoJpa) {
         this.accountDaoJpa = accountDaoJpa;
@@ -30,11 +31,9 @@ public class AccountServiceImpl implements AccountService {
         accountDaoJpa.deleteById(id);
     }
 
-    @Override
-    public Account findByTransactionsBetween(Date startDate, Date endDate) {
-        return accountDaoJpa.findByTransactionsBetween(startDate, endDate);
+    public List<Account> showAllAccounts() {
+        return accountDaoJpa.findAll();
     }
-
 
     @Override
     public Account findById(long id) {

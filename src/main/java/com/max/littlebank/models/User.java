@@ -1,16 +1,12 @@
 package com.max.littlebank.models;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Serov Maxim
@@ -46,9 +42,4 @@ public class User {
 
     @Column(name = "date_of_birth", nullable = false)
     private Date dateOfBirth;
-
-    @OneToMany
-            (cascade = CascadeType.ALL,
-            mappedBy = "user")
-    private List<Account> accounts = new ArrayList<>();
 }

@@ -16,7 +16,7 @@ import java.util.List;
  * @author Serov Maxim
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 

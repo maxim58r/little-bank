@@ -3,6 +3,7 @@ package com.max.littlebank.service;
 import com.max.littlebank.models.Account;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Serov Maxim
@@ -14,6 +15,7 @@ public interface AccountService {
 
      void deleteAccount(long id);
 
-    Account findByTransactionsBetween(Date startDate, Date endDate);
+    public List<Account> showAllAccounts();
+
 }
 

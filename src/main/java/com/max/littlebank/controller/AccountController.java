@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/accounts")
 public class AccountController {
     private final AccountService accountService;
 
@@ -26,21 +26,23 @@ public class AccountController {
         return accountService.findById(id);
     }
 
+    @GetMapping
+    public List<Account> showAllAccounts() {
+        return accountService.showAllAccounts();
+    }
 
     @DeleteMapping("/{id}")
     public String deleteAccountById(@PathVariable long id) {
         Account account = accountService.findById(id);
-        List<Transaction> transaction = account.getTransactions();
         if (account == null) {
             throw new NoSuchUserException("There is no user with account = " + id + " in DataBase");
         } else {
-//            transaction;
             accountService.deleteAccount(id);
         }
         return "User with id = " + id + " was deleted";
     }
 
-    @PostMapping("/account")
+    @PostMapping
     public void addAccount(@RequestBody Account account) {
         accountService.saveAccount(account);
     }

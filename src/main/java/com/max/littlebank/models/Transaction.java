@@ -1,15 +1,14 @@
 package com.max.littlebank.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author Serov Maxim
@@ -19,7 +18,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "transaction")
+@Table(name = "transactions")
 public class Transaction {
 
     @Id
@@ -30,15 +29,10 @@ public class Transaction {
     @Column(name = "ammount", nullable = false)
     private BigDecimal ammount;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "date_time",
-            updatable = false)
-    @CreationTimestamp
-//    @Generated(GenerationTime.INSERT)
-    private Date dateTime;
+    @Generated(GenerationTime.INSERT)
+    @Column(name = "date_time", updatable = false)
+    private LocalDateTime dateTime;
 
-    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "account", nullable = false)
     private Account account;
 }
