@@ -1,8 +1,10 @@
 package com.max.littlebank.controller;
 
+import com.max.littlebank.DTO.AccountDTO;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.models.Account;
 import com.max.littlebank.models.Transaction;
+import com.max.littlebank.models.Transfer;
 import com.max.littlebank.service.AccountService;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +45,14 @@ public class AccountController {
     }
 
     @PostMapping
-    public void addAccount(@RequestBody Account account) {
+    public void saveAccount(@RequestBody AccountDTO accountDTO) {
+        Account account = new Account(accountDTO);
         accountService.saveAccount(account);
+    }
+
+    @PutMapping("/transfer")
+    public String betweenAccountsTransfer(@RequestBody Transfer transfer) {
+        accountService.betweenAccountsTransfer(transfer);
+        return "Ok";
     }
 }

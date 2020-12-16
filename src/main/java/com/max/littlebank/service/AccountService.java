@@ -1,7 +1,9 @@
 package com.max.littlebank.service;
 
 import com.max.littlebank.models.Account;
+import com.max.littlebank.models.Transfer;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +17,9 @@ public interface AccountService {
 
      void deleteAccount(long id);
 
-    public List<Account> showAllAccounts();
+    List<Account> showAllAccounts();
 
-}
+    void betweenAccountsTransfer(Transfer transfer);
+
+    }
 

@@ -1,5 +1,6 @@
 package com.max.littlebank.models;
 
+import com.max.littlebank.DTO.TransactionDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,13 +27,25 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "ammount", nullable = false)
-    private BigDecimal ammount;
+    @Column(name = "type"/*, nullable = false*/)
+    private String type;
 
-    @Generated(GenerationTime.INSERT)
-    @Column(name = "date_time", updatable = false)
+    @Column(name = "amount", nullable = false)
+    private BigDecimal amount;
+
+    @Column(name = "date_time", updatable = false,
+            insertable = false,
+            columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime dateTime;
 
     @ManyToOne
     private Account account;
+
+      public Transaction(TransactionDTO transactionDTO) {
+          this.id = transactionDTO.getId();
+          this.type = transactionDTO.getType();
+          this.amount = transactionDTO.getAmount();
+          this.dateTime = transactionDTO.getDateTime();
+          this.account = transactionDTO.getAccount();
+    }
 }

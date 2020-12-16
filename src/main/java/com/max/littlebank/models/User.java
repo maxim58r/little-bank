@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Blob;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -41,5 +42,5 @@ public class User {
     private String address;
 
     @Column(name = "date_of_birth", nullable = false)
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 }

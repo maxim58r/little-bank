@@ -1,5 +1,6 @@
 package com.max.littlebank.controller;
 
+import com.max.littlebank.DTO.TransactionDTO;
 import com.max.littlebank.models.Transaction;
 import com.max.littlebank.service.TransactionService;
 import org.springframework.web.bind.annotation.*;
@@ -22,19 +23,22 @@ public class TransactionController {
 
     @GetMapping
     public List<Transaction> showAllTransactions() {
-       return transactionService.showAllTransactions();
+        return transactionService.showAllTransactions();
     }
 
 
     @GetMapping("/{startDate}/{endDate}") //"yyyy-MM-ddThh:mm:ss"  2007-12-03T10:15:30
     public List<Transaction> showAllTransactionsByDate(@PathVariable String startDate,
-                                                 @PathVariable String endDate ) {
-       return transactionService.findByTransactionBetweenDate(startDate, endDate);
+                                                       @PathVariable String endDate) {
+        return transactionService.findByTransactionBetweenDate(startDate, endDate);
     }
 
     @PostMapping
-    public String saveTransaction(@RequestBody Transaction transaction) {
+    public String saveTransaction(@RequestBody TransactionDTO transactionDTO) {
+        Transaction transaction = new Transaction(transactionDTO);
         transactionService.saveTransaction(transaction);
         return "Transaction with id = " + transaction.getId() + " created!";
     }
+
+
 }

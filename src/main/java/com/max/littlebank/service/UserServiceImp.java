@@ -1,6 +1,7 @@
 package com.max.littlebank.service;
 
 import com.max.littlebank.dao.UserDaoJpa;
+import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.models.User;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +24,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findById(long id) {
-        User user = null;
+        User user;
         Optional<User> optionalUser = userDaoJpa.findById(id);
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
+        } else {
+            throw new NoSuchUserException("User with " + id + " doesn`t exist");
         }
         return user;
     }
