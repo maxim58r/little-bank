@@ -1,6 +1,7 @@
 package com.max.littlebank.service;
 
 import com.max.littlebank.models.Account;
+import com.max.littlebank.models.Operation;
 import com.max.littlebank.models.Transfer;
 
 import java.math.BigDecimal;
@@ -21,5 +22,8 @@ public interface AccountService {
 
     void betweenAccountsTransfer(Transfer transfer);
 
-    }
+    void withdrawAccount(Transfer transfer);
+
+    void obtainAccount(Transfer transfer);
+}
 

@@ -13,8 +13,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Transfer {
-    private long transferFromId;
-    private long transferToId;
+public class Operation {
+    private long id;
     private BigDecimal amount;
 }

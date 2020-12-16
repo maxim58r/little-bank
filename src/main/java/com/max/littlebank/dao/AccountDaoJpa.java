@@ -9,5 +9,4 @@ import java.util.Date;
  * @author Serov Maxim
  */
 public interface AccountDaoJpa extends JpaRepository<Account, Long> {
-//    Account findByTransactionsBetween(Date startDate, Date endDate);
 }

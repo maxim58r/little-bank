@@ -3,10 +3,7 @@ package com.max.littlebank.service;
 import com.max.littlebank.dao.AccountDaoJpa;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.exeption_handing.TransferException;
-import com.max.littlebank.models.Account;
-import com.max.littlebank.models.Transaction;
-import com.max.littlebank.models.Transfer;
-import com.max.littlebank.models.Types;
+import com.max.littlebank.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,28 +55,48 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void betweenAccountsTransfer(Transfer transfer) {
-        Account accountFrom = findById(transfer.getTransferFromId());
-        Account accountTo = findById(transfer.getTransferToId());
+        withdrawAccount(transfer);
+        obtainAccount(transfer);
+    }
 
-        Transaction transactionFrom = new Transaction();
-        transactionFrom.setType("TRANSFER");
-        transactionFrom.setAmount(transfer.getAmount().negate());
-        transactionFrom.setAccount(accountFrom);
+    @Override
+    public void withdrawAccount(Transfer transfer) {
+        Account account = findById(transfer.getTransferFromId());
+        Transaction transaction = getTransaction(account,
+                transfer.getAmount(),
+                "WITHDRAW");
 
-        Transaction transactionTo = new Transaction();
-        transactionTo.setType("OBTAIN");
-        transactionTo.setAmount(transfer.getAmount());
-        transactionTo.setAccount(accountTo);
+        account.setAmount(account.getAmount().subtract(transfer.getAmount()));
 
-        accountFrom.setAmount(accountFrom.getAmount().subtract(transfer.getAmount()));
-        BigDecimal a = accountFrom.getAmount();
-
-        if (a.signum() >= 0) {
-            accountTo.setAmount(accountTo.getAmount().add(transfer.getAmount()));
-            transactionService.saveTransaction(transactionFrom);
-            transactionService.saveTransaction(transactionTo);
+        if (account.getAmount().signum() >= 0) {
+            transactionService.saveTransaction(transaction);
         } else {
             throw new TransferException("Insufficient funds on the account");
         }
+    }
+
+    @Override
+    public void obtainAccount(Transfer transfer) {
+        Account account = findById(transfer.getTransferToId());
+        Transaction transaction = getTransaction(account,
+                transfer.getAmount(),
+                "OBTAIN");
+
+        account.setAmount(account.getAmount().add(transfer.getAmount()));
+        transactionService.saveTransaction(transaction);
+    }
+
+    private Transaction getTransaction(Account account, BigDecimal amount, String type) {
+        Transaction transaction = new Transaction();
+        if (type.equals("WITHDRAW")) {
+            transaction.setType(type);
+            transaction.setAmount(amount.negate());
+            transaction.setAccount(account);
+        } else if (type.equals("OBTAIN")) {
+            transaction.setType(type);
+            transaction.setAmount(amount);
+            transaction.setAccount(account);
+        }
+        return transaction;
     }
 }
