@@ -10,10 +10,12 @@ import java.util.List;
 public interface TransactionService {
     void saveTransaction(Transaction transaction);
 
-    void deleteTransaction(Transaction transaction);
+     void deleteAllByAccount_AccountNumber(long accountNumber);
 
-    public List<Transaction> showAllTransactions();
+     List<Transaction> showAllTransactions();
 
     List<Transaction> findByTransactionBetweenDate(String startDate, String endDate);
+
+    List<Transaction> findAllByAccount_AccountNumber(long accountNumber);
 
 }

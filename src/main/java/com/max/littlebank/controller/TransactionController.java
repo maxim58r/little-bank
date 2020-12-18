@@ -26,6 +26,11 @@ public class TransactionController {
         return transactionService.showAllTransactions();
     }
 
+    @GetMapping("/{id}")
+    public List<Transaction> showAllTransactions(@PathVariable long id) {
+        return transactionService.findAllByAccount_AccountNumber(id);
+    }
+
 
     @GetMapping("/{startDate}/{endDate}") //"yyyy-MM-ddThh:mm:ss"  2007-12-03T10:15:30
     public List<Transaction> showAllTransactionsByDate(@PathVariable String startDate,
@@ -40,5 +45,10 @@ public class TransactionController {
         return "Transaction with id = " + transaction.getId() + " created!";
     }
 
+    @DeleteMapping("/{id}")
+    public String deleteAllByAccount_AccountNumber(@PathVariable long id) {
+        transactionService.deleteAllByAccount_AccountNumber(id);
+        return "Deleted ok transactions with account number" + id;
+    }
 
 }

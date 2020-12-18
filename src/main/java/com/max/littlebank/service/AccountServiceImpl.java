@@ -5,7 +5,9 @@ import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.exeption_handing.TransferException;
 import com.max.littlebank.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -19,24 +21,52 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountDaoJpa accountDaoJpa;
+    private final TransactionService transactionService;
 
-    @Autowired
-    TransactionService transactionService;
-
-    public AccountServiceImpl(AccountDaoJpa accountDaoJpa) {
+    public AccountServiceImpl(AccountDaoJpa accountDaoJpa, TransactionService transactionService) {
         this.accountDaoJpa = accountDaoJpa;
+        this.transactionService = transactionService;
     }
 
+    @Transactional
     @Override
     public void saveAccount(Account account) {
+        account.setAccountNumber(0);
+        account.setAmount(BigDecimal.ZERO);
+        account.setOpeningDate(null);
+        account.setValidityPeriod(null);
         accountDaoJpa.save(account);
     }
 
+    @Transactional
     @Override
     public void deleteAccount(long id) {
+        transactionService.deleteAllByAccount_AccountNumber(id);
         accountDaoJpa.deleteById(id);
     }
 
+    @Transactional
+    @Override
+    public void deleteAllByOwner_Id(long id) {
+        Account account = findById(id);
+        if (account == null) {
+            throw new NoSuchUserException("There is no account = " + id + " in DataBase");
+        } else {
+
+            List<Account> accounts = findAllByOwner_Id(id);
+            for (var accountVar : accounts) {
+                transactionService.deleteAllByAccount_AccountNumber(accountVar.getAccountNumber());
+            }
+        }
+        accountDaoJpa.deleteAllByOwner_Id(id);
+    }
+
+    @Override
+    public List<Account> findAllByOwner_Id(long id) {
+        return accountDaoJpa.findAllByOwner_Id(id);
+    }
+
+    @Override
     public List<Account> showAllAccounts() {
         return accountDaoJpa.findAll();
     }
@@ -53,12 +83,14 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
+    @Transactional
     @Override
     public void betweenAccountsTransfer(Transfer transfer) {
         withdrawAccount(transfer);
         obtainAccount(transfer);
     }
 
+    @Transactional
     @Override
     public void withdrawAccount(Transfer transfer) {
         Account account = findById(transfer.getTransferFromId());
@@ -75,6 +107,7 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Transactional
     @Override
     public void obtainAccount(Transfer transfer) {
         Account account = findById(transfer.getTransferToId());

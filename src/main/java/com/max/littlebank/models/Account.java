@@ -4,8 +4,6 @@ import com.max.littlebank.DTO.AccountDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -47,7 +45,7 @@ public class Account {
         this.amount = amount;
     }
 
-    public Account(AccountDTO accountDTO ) {
+    public Account(AccountDTO accountDTO) {
         this.accountNumber = accountDTO.getAccountNumber();
         this.amount = accountDTO.getAmount();
         this.openingDate = accountDTO.getOpeningDate();

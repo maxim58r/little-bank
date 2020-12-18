@@ -1,15 +1,13 @@
 package com.max.littlebank.controller;
 
 import com.max.littlebank.exeption_handing.NoSuchUserException;
-import com.max.littlebank.models.Account;
-import com.max.littlebank.models.Transaction;
+import com.max.littlebank.exeption_handing.UserIncorrectDataEntryException;
 import com.max.littlebank.models.User;
-import com.max.littlebank.service.AccountService;
-import com.max.littlebank.service.AccountServiceImpl;
 import com.max.littlebank.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -31,41 +29,39 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User showUserById(@PathVariable long id) {
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new NoSuchUserException("There is no user with id = " + id + " in DataBase");
-        }
         return userService.findById(id);
     }
 
     @GetMapping("/phone/{number}")
     public User showUserByPhone(@PathVariable String number) {
-        User user = userService.findByPhone(number);
-        if (user == null) {
-            throw new NoSuchUserException("There is no user with phone = " + number + " in DataBase");
-        }
-        return userService.findByPhone(number);
+        return  userService.findByPhone(number);
+    }
+
+    @GetMapping("/email/{email}")
+    public User showUserByEmail(@PathVariable String email) {
+        return userService.findByEmail(email);
+    }
+
+    @GetMapping("/fullname/{fullname}")
+    public User showUserByFullname(@PathVariable String fullname) {
+        return userService.findByFullname(fullname);
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
+    ResponseEntity<String> saveUser(@Valid @RequestBody User user) {
         userService.saveUser(user);
-        return user;
+        return ResponseEntity.ok("User is valid");
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
-        userService.saveUser(user);
-        return user;
+    ResponseEntity<String> updateUser(@Valid @RequestBody User user) {
+        userService.updateUser(user);
+        return ResponseEntity.ok("User is valid");
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable long id) {
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new NoSuchUserException("There is no user with id = " + id + " in DataBase");
-        }
-        userService.deleteUser(id);
+    public String deleteById(@PathVariable long id) {
+        userService.deleteById(id);
         return "User with id = " + id + " was deleted";
     }
 }

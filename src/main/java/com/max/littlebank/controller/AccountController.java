@@ -3,10 +3,9 @@ package com.max.littlebank.controller;
 import com.max.littlebank.DTO.AccountDTO;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.models.Account;
-import com.max.littlebank.models.Operation;
-import com.max.littlebank.models.Transaction;
 import com.max.littlebank.models.Transfer;
 import com.max.littlebank.service.AccountService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +24,8 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public Account showAccountById(@PathVariable long id) {
-        return accountService.findById(id);
+    public List<Account> findAllByOwner_Id(@PathVariable long id) {
+        return accountService.findAllByOwner_Id(id);
     }
 
     @GetMapping
@@ -35,14 +34,9 @@ public class AccountController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteAccountById(@PathVariable long id) {
-        Account account = accountService.findById(id);
-        if (account == null) {
-            throw new NoSuchUserException("There is no user with account = " + id + " in DataBase");
-        } else {
-            accountService.deleteAccount(id);
-        }
-        return "User with id = " + id + " was deleted";
+    public String deleteAllByOwner_Id(@PathVariable long id) {
+        accountService.deleteAllByOwner_Id(id);
+        return "Accounts with Owner_Id = " + id + " was deleted";
     }
 
     @PostMapping
@@ -54,7 +48,7 @@ public class AccountController {
     @PutMapping("/transfer")
     public String betweenAccountsTransfer(@RequestBody Transfer transfer) {
         accountService.betweenAccountsTransfer(transfer);
-        return "Money transfer transaction completed";
+        return "Cash transfer transactions completed";
     }
 
     @PutMapping("/withdraw")
