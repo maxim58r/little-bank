@@ -37,18 +37,16 @@ public class TransactionController {
                                                        @PathVariable String endDate) {
         return transactionService.findByTransactionBetweenDate(startDate, endDate);
     }
+//    @PostMapping
+//    public String saveTransaction(@RequestBody TransactionDTO transactionDTO) {
+//        Transaction transaction = new Transaction(transactionDTO);
+//        transactionService.saveTransaction(transaction);
+//        return "Transaction with id = " + transaction.getId() + " created!";
+//    }
 
-    @PostMapping
-    public String saveTransaction(@RequestBody TransactionDTO transactionDTO) {
-        Transaction transaction = new Transaction(transactionDTO);
-        transactionService.saveTransaction(transaction);
-        return "Transaction with id = " + transaction.getId() + " created!";
-    }
-
-    @DeleteMapping("/{id}")
-    public String deleteAllByAccount_AccountNumber(@PathVariable long id) {
-        transactionService.deleteAllByAccount_AccountNumber(id);
-        return "Deleted ok transactions with account number" + id;
-    }
-
+//    @DeleteMapping("/{id}")
+//    public String deleteAllByAccount_AccountNumber(@PathVariable long id) {
+//        transactionService.deleteAllByAccount_AccountNumber(id);
+//        return "Deleted ok transactions with account number" + id;
+//    }
 }

@@ -5,6 +5,7 @@ import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.models.Account;
 import com.max.littlebank.models.Transfer;
 import com.max.littlebank.service.AccountService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,32 +35,33 @@ public class AccountController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteAllByOwner_Id(@PathVariable long id) {
+    ResponseEntity<String> deleteAllByOwner_Id(@PathVariable long id) {
         accountService.deleteAllByOwner_Id(id);
-        return "Accounts with Owner_Id = " + id + " was deleted";
+        return ResponseEntity.ok("Accounts with Owner_Id = " + id + " was deleted");
     }
 
     @PostMapping
-    public void saveAccount(@RequestBody AccountDTO accountDTO) {
+    ResponseEntity<String>  saveAccount(@RequestBody AccountDTO accountDTO) {
         Account account = new Account(accountDTO);
         accountService.saveAccount(account);
+        return ResponseEntity.ok("Account was created");
     }
 
     @PutMapping("/transfer")
-    public String betweenAccountsTransfer(@RequestBody Transfer transfer) {
+    ResponseEntity<String> betweenAccountsTransfer(@RequestBody Transfer transfer) {
         accountService.betweenAccountsTransfer(transfer);
-        return "Cash transfer transactions completed";
+        return ResponseEntity.ok("Cash transfer transactions completed");
     }
 
     @PutMapping("/withdraw")
-    public String withdrawAccount(@RequestBody Transfer transfer) {
+    ResponseEntity<String> withdrawAccount(@RequestBody Transfer transfer) {
         accountService.withdrawAccount(transfer);
-        return "Withdrawals have been completed";
+        return ResponseEntity.ok("Withdrawals have been completed");
     }
 
     @PutMapping("/obtain")
-    public String obtainAccount(@RequestBody Transfer transfer) {
+    ResponseEntity<String> obtainAccount(@RequestBody Transfer transfer) {
         accountService.obtainAccount(transfer);
-        return "Obtain have been completed";
+        return ResponseEntity.ok("Obtain have been completed");
     }
 }

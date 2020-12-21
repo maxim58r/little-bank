@@ -1,8 +1,6 @@
 package com.max.littlebank.models;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,10 +12,12 @@ import java.time.LocalDate;
 /**
  * @author Serov Maxim
  */
-
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+@EqualsAndHashCode
 @Entity
 @Table(name = "users")
 public class User {
@@ -50,6 +50,6 @@ public class User {
     @Column(name = "address", nullable = false)
     private String address;
 
-    @Column(name = "date_of_birth", nullable = false, length = 19)
+    @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 }

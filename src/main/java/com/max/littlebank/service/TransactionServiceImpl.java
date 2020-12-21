@@ -2,6 +2,7 @@ package com.max.littlebank.service;
 
 import com.max.littlebank.dao.TransactionDaoJpa;
 import com.max.littlebank.models.Transaction;
+import com.max.littlebank.models.User;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

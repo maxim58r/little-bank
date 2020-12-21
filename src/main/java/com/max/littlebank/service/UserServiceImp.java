@@ -4,7 +4,6 @@ import com.max.littlebank.dao.UserDaoJpa;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.exeption_handing.UserIncorrectDataEntryException;
 import com.max.littlebank.models.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +24,12 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
         user.setId(0);
         if (findByFullname(user.getFullname()) == null ||
                 findByEmail(user.getEmail()) == null ||
                 findByPhone(user.getPhone()) == null) {
-            userDaoJpa.save(user);
+            return userDaoJpa.save(user);
         } else {
             throw new UserIncorrectDataEntryException("A user exist in DataBase");
         }
@@ -38,9 +37,10 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void updateUser(User user) {
+    public User updateUser(User user) {
         findById(user.getId());
         userDaoJpa.save(user);
+        return user;
     }
 
     @Override
@@ -57,17 +57,38 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findByPhone(String numberPhone) {
-        return userDaoJpa.findByPhone(numberPhone);
+        User user;
+        Optional<User> optionalUser = Optional.ofNullable(userDaoJpa.findByPhone(numberPhone));
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        } else {
+            throw new NoSuchUserException("User with " + numberPhone + " doesn`t exist");
+        }
+        return user;
     }
 
     @Override
     public User findByFullname(String fullname) {
-        return userDaoJpa.findByFullname(fullname);
+        User user;
+        Optional<User> optionalUser = Optional.ofNullable(userDaoJpa.findByFullname(fullname));
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        } else {
+            throw new NoSuchUserException("User with " + fullname + " doesn`t exist");
+        }
+        return user;
     }
 
     @Override
     public User findByEmail(String email) {
-        return userDaoJpa.findByEmail(email);
+        User user;
+        Optional<User> optionalUser = Optional.ofNullable(userDaoJpa.findByEmail(email));
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        } else {
+            throw new NoSuchUserException("User with " + email + " doesn`t exist");
+        }
+        return user;
     }
 
     @Transactional

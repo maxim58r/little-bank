@@ -1,14 +1,16 @@
 package com.max.littlebank.controller;
 
 import com.max.littlebank.exeption_handing.NoSuchUserException;
-import com.max.littlebank.exeption_handing.UserIncorrectDataEntryException;
 import com.max.littlebank.models.User;
 import com.max.littlebank.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Serov Maxim
@@ -22,46 +24,52 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public List<User> showAllUsers() {
-        return userService.findAll();
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<User>> showAllUsers() {
+        List<User> users = userService.findAll();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public User showUserById(@PathVariable long id) {
-        return userService.findById(id);
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> showUserById(@PathVariable long id) {
+        User user = userService.findById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/phone/{number}")
-    public User showUserByPhone(@PathVariable String number) {
-        return  userService.findByPhone(number);
+    @GetMapping(path = "/phone/{number}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> showUserByPhone(@PathVariable String number) {
+        User user = userService.findByPhone(number);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/email/{email}")
-    public User showUserByEmail(@PathVariable String email) {
-        return userService.findByEmail(email);
+    @GetMapping(path = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> showUserByEmail(@PathVariable String email) {
+        User user = userService.findByEmail(email);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/fullname/{fullname}")
-    public User showUserByFullname(@PathVariable String fullname) {
-        return userService.findByFullname(fullname);
+    @GetMapping(path = "/fullname/{fullname}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> showUserByFullname(@PathVariable String fullname) {
+        User user = userService.findByFullname(fullname);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PostMapping
-    ResponseEntity<String> saveUser(@Valid @RequestBody User user) {
-        userService.saveUser(user);
-        return ResponseEntity.ok("User is valid");
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> saveUser(@Valid @RequestBody User user) {
+        User userNew = userService.saveUser(user);
+        return new ResponseEntity<>(userNew, HttpStatus.CREATED);
     }
 
-    @PutMapping
-    ResponseEntity<String> updateUser(@Valid @RequestBody User user) {
-        userService.updateUser(user);
-        return ResponseEntity.ok("User is valid");
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updateUser(@Valid @RequestBody User user) {
+        User userNew = userService.updateUser(user);
+        return new ResponseEntity<>(userNew, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteById(@PathVariable long id) {
+    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteById(@PathVariable long id) {
         userService.deleteById(id);
-        return "User with id = " + id + " was deleted";
+        return new ResponseEntity<>("User with id = " + id + " was deleted",
+                HttpStatus.NO_CONTENT);
     }
 }

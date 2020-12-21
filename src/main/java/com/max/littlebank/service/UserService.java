@@ -3,11 +3,12 @@ package com.max.littlebank.service;
 import com.max.littlebank.models.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
-    void saveUser(User user);
+    User saveUser(User user);
 
-    public void updateUser(User user);
+    User updateUser(User user);
 
     User findById(long id);
 
