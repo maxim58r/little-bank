@@ -1,6 +1,7 @@
 package com.max.littlebank.models;
 
 import com.max.littlebank.DTO.TransactionDTO;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,6 +41,7 @@ public class Transaction {
 
     @ManyToOne
     private Account account;
+
 
       public Transaction(TransactionDTO transactionDTO) {
           this.id = transactionDTO.getId();

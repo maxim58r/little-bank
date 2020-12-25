@@ -39,35 +39,35 @@ public class AccountController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<String> deleteAllByOwner_Id(@PathVariable long id) {
+    public ResponseEntity<String> deleteAllByOwner_Id(@PathVariable long id) {
         accountService.deleteAllByOwner_Id(id);
         return new ResponseEntity<>("Accounts with Owner_Id = " + id + " was deleted",
                 HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
-    ResponseEntity<String> saveAccount(@RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<String> saveAccount(@RequestBody AccountDTO accountDTO) {
         Account account = new Account(accountDTO);
         accountService.saveAccount(account);
         return new ResponseEntity<>("Account was created", HttpStatus.CREATED);
     }
 
     @PutMapping("/transfer")
-    ResponseEntity<String> betweenAccountsTransfer(@RequestBody Transfer transfer) {
+    public ResponseEntity<String> betweenAccountsTransfer(@RequestBody Transfer transfer) {
         accountService.betweenAccountsTransfer(transfer);
         return new ResponseEntity<>("Cash transfer transactions completed",
                 HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/withdraw")
-    ResponseEntity<String> withdrawAccount(@RequestBody Transfer transfer) {
+    public ResponseEntity<String> withdrawAccount(@RequestBody Transfer transfer) {
         accountService.withdrawAccount(transfer);
         return new ResponseEntity<>("Withdrawals have been completed",
                 HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/obtain")
-    ResponseEntity<String> obtainAccount(@RequestBody Transfer transfer) {
+    public ResponseEntity<String> obtainAccount(@RequestBody Transfer transfer) {
         accountService.obtainAccount(transfer);
         return new ResponseEntity<>("Obtain have been completed",
                 HttpStatus.ACCEPTED);

@@ -2,6 +2,7 @@ package com.max.littlebank.DTO;
 
 import com.max.littlebank.models.Account;
 import com.max.littlebank.models.Transaction;
+import com.max.littlebank.models.TransactionType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

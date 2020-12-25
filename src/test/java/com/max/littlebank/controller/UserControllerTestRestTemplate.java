@@ -1,24 +1,23 @@
 package com.max.littlebank.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.max.littlebank.LittleBankApplication;
-import com.max.littlebank.dao.UserDaoJpa;
+import com.max.littlebank.repository.UserRepositoryJpa;
 import com.max.littlebank.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,7 +28,8 @@ import static org.junit.Assert.assertTrue;
  * @author Serov Maxim
  */
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = LittleBankApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+        classes = LittleBankApplication.class)
 @ActiveProfiles("integration")
 public class UserControllerTestRestTemplate {
 
@@ -40,7 +40,7 @@ public class UserControllerTestRestTemplate {
     private TestRestTemplate testRestTemplate;
 
     @Autowired
-    UserDaoJpa userDaoJpa;
+    UserRepositoryJpa userRepositoryJpa;
 
     @Autowired
     ObjectMapper objectMapper;

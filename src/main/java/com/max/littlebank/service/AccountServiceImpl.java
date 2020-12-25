@@ -1,6 +1,6 @@
 package com.max.littlebank.service;
 
-import com.max.littlebank.dao.AccountDaoJpa;
+import com.max.littlebank.repository.AccountRepositoryJpa;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.exeption_handing.TransferException;
 import com.max.littlebank.models.*;
@@ -17,11 +17,11 @@ import java.util.Optional;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-    private final AccountDaoJpa accountDaoJpa;
+    private final AccountRepositoryJpa accountRepositoryJpa;
     private final TransactionService transactionService;
 
-    public AccountServiceImpl(AccountDaoJpa accountDaoJpa, TransactionService transactionService) {
-        this.accountDaoJpa = accountDaoJpa;
+    public AccountServiceImpl(AccountRepositoryJpa accountRepositoryJpa, TransactionService transactionService) {
+        this.accountRepositoryJpa = accountRepositoryJpa;
         this.transactionService = transactionService;
     }
 
@@ -32,14 +32,14 @@ public class AccountServiceImpl implements AccountService {
         account.setAmount(BigDecimal.ZERO);
         account.setOpeningDate(null);
         account.setValidityPeriod(null);
-        accountDaoJpa.save(account);
+        accountRepositoryJpa.save(account);
     }
 
     @Transactional
     @Override
     public void deleteAccount(long id) {
         transactionService.deleteAllByAccount_AccountNumber(id);
-        accountDaoJpa.deleteById(id);
+        accountRepositoryJpa.deleteById(id);
     }
 
     @Transactional
@@ -55,23 +55,23 @@ public class AccountServiceImpl implements AccountService {
                 transactionService.deleteAllByAccount_AccountNumber(accountVar.getAccountNumber());
             }
         }
-        accountDaoJpa.deleteAllByOwner_Id(id);
+        accountRepositoryJpa.deleteAllByOwner_Id(id);
     }
 
     @Override
     public List<Account> findAllByOwner_Id(long id) {
-        return accountDaoJpa.findAllByOwner_Id(id);
+        return accountRepositoryJpa.findAllByOwner_Id(id);
     }
 
     @Override
     public List<Account> showAllAccounts() {
-        return accountDaoJpa.findAll();
+        return accountRepositoryJpa.findAll();
     }
 
     @Override
     public Account findById(long id) {
         Account account;
-        Optional<Account> optionalAccount = accountDaoJpa.findById(id);
+        Optional<Account> optionalAccount = accountRepositoryJpa.findById(id);
         if (optionalAccount.isPresent()) {
             account = optionalAccount.get();
         } else {
@@ -82,18 +82,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public void betweenAccountsTransfer(Transfer transfer) {
+    public boolean betweenAccountsTransfer(Transfer transfer) {
         withdrawAccount(transfer);
         obtainAccount(transfer);
+        return true;
     }
 
     @Transactional
     @Override
     public boolean withdrawAccount(Transfer transfer) {
         Account account = findById(transfer.getTransferFromId());
-        Transaction transaction = getTransaction(account,
-                transfer.getAmount(),
-                "WITHDRAW");
+        Transaction transaction = getTransaction(account, transfer.getAmount(), TransactionType.WITHDRAW);
 
         account.setAmount(account.getAmount().subtract(transfer.getAmount()));
 
@@ -107,24 +106,26 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public void obtainAccount(Transfer transfer) {
+    public boolean obtainAccount(Transfer transfer) {
         Account account = findById(transfer.getTransferToId());
-        Transaction transaction = getTransaction(account,
-                transfer.getAmount(),
-                "OBTAIN");
+        Transaction transaction = getTransaction(account, transfer.getAmount(), TransactionType.OBTAIN);
 
         account.setAmount(account.getAmount().add(transfer.getAmount()));
+
         transactionService.saveTransaction(transaction);
+        return true;
     }
 
-    private Transaction getTransaction(Account account, BigDecimal amount, String type) {
+    private Transaction getTransaction(Account account, BigDecimal amount, TransactionType type) {
         Transaction transaction = new Transaction();
-        if (type.equals("WITHDRAW")) {
-            transaction.setType(type);
+
+        if (type.toString().equals("WITHDRAW")) {
+            transaction.setType(type.toString());
             transaction.setAmount(amount.negate());
             transaction.setAccount(account);
-        } else if (type.equals("OBTAIN")) {
-            transaction.setType(type);
+
+        } else if (type.toString().equals("OBTAIN")) {
+            transaction.setType(type.toString());
             transaction.setAmount(amount);
             transaction.setAccount(account);
         }

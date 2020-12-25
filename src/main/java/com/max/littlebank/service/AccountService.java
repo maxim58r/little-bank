@@ -21,10 +21,10 @@ public interface AccountService {
 
     void deleteAllByOwner_Id(long id);
 
-    void betweenAccountsTransfer(Transfer transfer);
+    boolean betweenAccountsTransfer(Transfer transfer);
 
     boolean withdrawAccount(Transfer transfer);
 
-    void obtainAccount(Transfer transfer);
+    boolean obtainAccount(Transfer transfer);
 }
 

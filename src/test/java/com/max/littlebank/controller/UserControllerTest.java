@@ -1,7 +1,7 @@
 package com.max.littlebank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.max.littlebank.dao.UserDaoJpa;
+import com.max.littlebank.repository.UserRepositoryJpa;
 import com.max.littlebank.models.User;
 import com.max.littlebank.service.AccountService;
 import com.max.littlebank.service.StorageService;
@@ -56,7 +56,8 @@ class UserControllerTest {
     AccountService accountService;
 
     @MockBean
-    UserDaoJpa userDaoJpa;
+    UserRepositoryJpa userRepositoryJpa;
+
     @Test
     public void get_allUsers_returnsOkWithListOfUsers() throws Exception {
 

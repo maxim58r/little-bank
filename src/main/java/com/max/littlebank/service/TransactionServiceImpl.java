@@ -1,8 +1,7 @@
 package com.max.littlebank.service;
 
-import com.max.littlebank.dao.TransactionDaoJpa;
+import com.max.littlebank.repository.TransactionRepositoryJpa;
 import com.max.littlebank.models.Transaction;
-import com.max.littlebank.models.User;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,31 +14,32 @@ import java.util.List;
  */
 @Service
 public class TransactionServiceImpl implements TransactionService {
-    private final TransactionDaoJpa transactionDaoJpa;
+    private final TransactionRepositoryJpa transactionRepositoryJpa;
 
-    public TransactionServiceImpl(TransactionDaoJpa transactionDaoJpa) {
-        this.transactionDaoJpa = transactionDaoJpa;
+    public TransactionServiceImpl(TransactionRepositoryJpa transactionRepositoryJpa) {
+        this.transactionRepositoryJpa = transactionRepositoryJpa;
     }
 
     @Transactional
     @Override
     public void saveTransaction(Transaction transaction) {
-        transactionDaoJpa.save(transaction);
+        transactionRepositoryJpa.save(transaction);
     }
 
     @Transactional
     @Override
     public void deleteAllByAccount_AccountNumber(long accountNumber) {
-        transactionDaoJpa.deleteAllByAccount_AccountNumber(accountNumber);
+        transactionRepositoryJpa.deleteAllByAccount_AccountNumber(accountNumber);
     }
 
+    @Override
     public List<Transaction> showAllTransactions() {
-        return transactionDaoJpa.findAll();
+        return transactionRepositoryJpa.findAll();
     }
 
     @Override
     public List<Transaction> findAllByAccount_AccountNumber(long accountNumber) {
-        return transactionDaoJpa.findAllByAccount_AccountNumber(accountNumber);
+        return transactionRepositoryJpa.findAllByAccount_AccountNumber(accountNumber);
     }
 
     @SneakyThrows
@@ -47,7 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
     public List<Transaction> findByTransactionBetweenDate(String startDate, String endDate) {
         LocalDateTime localStartDate = LocalDateTime.parse(startDate);
         LocalDateTime localEndDate = LocalDateTime.parse(endDate);
-        return transactionDaoJpa.findByDateTimeBetween(localStartDate,
+        return transactionRepositoryJpa.findByDateTimeBetween(localStartDate,
                 localEndDate);
     }
 

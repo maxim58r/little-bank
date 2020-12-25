@@ -1,6 +1,6 @@
 package com.max.littlebank.service;
 
-import com.max.littlebank.dao.UserDaoJpa;
+import com.max.littlebank.repository.UserRepositoryJpa;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.exeption_handing.UserIncorrectDataEntryException;
 import com.max.littlebank.models.User;
@@ -13,12 +13,12 @@ import java.util.Optional;
 @Service
 public class UserServiceImp implements UserService {
 
-    private final UserDaoJpa userDaoJpa;
+    private final UserRepositoryJpa userRepositoryJpa;
 
     private final AccountService accountService;
 
-    public UserServiceImp(UserDaoJpa userDaoJpa, AccountService accountService) {
-        this.userDaoJpa = userDaoJpa;
+    public UserServiceImp(UserRepositoryJpa userRepositoryJpa, AccountService accountService) {
+        this.userRepositoryJpa = userRepositoryJpa;
         this.accountService = accountService;
     }
 
@@ -29,7 +29,7 @@ public class UserServiceImp implements UserService {
         if (findByFullname(user.getFullname()) == null ||
                 findByEmail(user.getEmail()) == null ||
                 findByPhone(user.getPhone()) == null) {
-            return userDaoJpa.save(user);
+            return userRepositoryJpa.save(user);
         } else {
             throw new UserIncorrectDataEntryException("A user exist in DataBase");
         }
@@ -39,14 +39,14 @@ public class UserServiceImp implements UserService {
     @Override
     public User updateUser(User user) {
         findById(user.getId());
-        userDaoJpa.save(user);
+        userRepositoryJpa.save(user);
         return user;
     }
 
     @Override
     public User findById(long id) {
         User user;
-        Optional<User> optionalUser = userDaoJpa.findById(id);
+        Optional<User> optionalUser = userRepositoryJpa.findById(id);
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
@@ -58,7 +58,7 @@ public class UserServiceImp implements UserService {
     @Override
     public User findByPhone(String numberPhone) {
         User user;
-        Optional<User> optionalUser = Optional.ofNullable(userDaoJpa.findByPhone(numberPhone));
+        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByPhone(numberPhone));
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
@@ -70,7 +70,7 @@ public class UserServiceImp implements UserService {
     @Override
     public User findByFullname(String fullname) {
         User user;
-        Optional<User> optionalUser = Optional.ofNullable(userDaoJpa.findByFullname(fullname));
+        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByFullname(fullname));
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
@@ -82,7 +82,7 @@ public class UserServiceImp implements UserService {
     @Override
     public User findByEmail(String email) {
         User user;
-        Optional<User> optionalUser = Optional.ofNullable(userDaoJpa.findByEmail(email));
+        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByEmail(email));
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
@@ -99,11 +99,11 @@ public class UserServiceImp implements UserService {
             throw new NoSuchUserException("There is no user with id = " + id + " in DataBase");
         }
         accountService.deleteAllByOwner_Id(id);
-        userDaoJpa.deleteById(id);
+        userRepositoryJpa.deleteById(id);
     }
 
     @Override
     public List<User> findAll() {
-        return userDaoJpa.findAll();
+        return userRepositoryJpa.findAll();
     }
 }

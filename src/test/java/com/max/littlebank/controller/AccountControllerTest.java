@@ -1,21 +1,19 @@
 package com.max.littlebank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.max.littlebank.dao.AccountDaoJpa;
+import com.max.littlebank.repository.AccountRepositoryJpa;
 import com.max.littlebank.models.Account;
 import com.max.littlebank.models.Transfer;
 import com.max.littlebank.models.User;
 import com.max.littlebank.service.AccountService;
 import com.max.littlebank.service.TransactionService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,8 +34,9 @@ import static org.mockito.Mockito.*;
  * @author Serov Maxim
  */
 
-@ActiveProfiles("test")
+@ActiveProfiles("test_account_controller")
 @WebMvcTest(AccountController.class)
+//@SpringBootTest
 public class AccountControllerTest {
 
     @Autowired
@@ -50,7 +49,7 @@ public class AccountControllerTest {
     AccountService accountService;
 
     @MockBean
-    AccountDaoJpa accountDaoJpa;
+    AccountRepositoryJpa accountRepositoryJpa;
 
     @MockBean
     TransactionService transactionService;
@@ -74,7 +73,6 @@ public class AccountControllerTest {
 //        when(accountService.withdrawAccount(getTransferFromId())).thenReturn(true);
         given(accountService.withdrawAccount(getTransferFromId())).willReturn(true);
 
-        
         this.mockMvc.perform(put("/accounts/withdraw")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted());
@@ -107,6 +105,10 @@ public class AccountControllerTest {
     }
 
     private Transfer getTransferToId() {
-        return Transfer.builder().transferFromId(1).amount(BigDecimal.valueOf(500)).build();
+        return Transfer.builder().transferToId(1).amount(BigDecimal.valueOf(500)).build();
+    }
+
+    private Transfer betweenAccountsTransfer() {
+        return Transfer.builder().transferFromId(0).transferToId(1).amount(BigDecimal.valueOf(500)).build();
     }
 }
