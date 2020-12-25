@@ -23,7 +23,7 @@ public interface AccountService {
 
     void betweenAccountsTransfer(Transfer transfer);
 
-    void withdrawAccount(Transfer transfer);
+    boolean withdrawAccount(Transfer transfer);
 
     void obtainAccount(Transfer transfer);
 }

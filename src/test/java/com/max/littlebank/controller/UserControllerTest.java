@@ -1,8 +1,10 @@
 package com.max.littlebank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.max.littlebank.exeption_handing.NoSuchUserException;
+import com.max.littlebank.dao.UserDaoJpa;
 import com.max.littlebank.models.User;
+import com.max.littlebank.service.AccountService;
+import com.max.littlebank.service.StorageService;
 import com.max.littlebank.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,13 +24,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,8 +47,16 @@ class UserControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
+    StorageService storageService;
+
+    @MockBean
     UserService userService;
 
+    @MockBean
+    AccountService accountService;
+
+    @MockBean
+    UserDaoJpa userDaoJpa;
     @Test
     public void get_allUsers_returnsOkWithListOfUsers() throws Exception {
 
@@ -115,7 +124,7 @@ class UserControllerTest {
         long userId = 1L;
 
         UserService serviceSpy = Mockito.spy(userService);
-        Mockito.doNothing().when(serviceSpy).deleteById(userId);
+        doNothing().when(serviceSpy).deleteById(userId);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -126,28 +135,19 @@ class UserControllerTest {
 
 
     @Test
-    public void get_userByPhone_ThrowsNoSuchUserException() throws Exception {
+    public void get_userByPhone_Returns200Status() throws Exception {
         String numberPhone = "+7937-123-45-67";
-//        Mockito.when(userService.findByPhone(numberPhone)).thenReturn(getNewUser());
-//
-//        mockMvc.perform(MockMvcRequestBuilders.get("/users/phone/" + numberPhone).contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.phone", is("+7937-123-45-67")));
-
 
         Mockito.when(userService.findByPhone(numberPhone))
                 .thenReturn(getNewUser());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+        mockMvc.perform(MockMvcRequestBuilders
                 .get("/users/phone/" + numberPhone).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
 
-        assertEquals(NoSuchUserException.class,
-                Objects.requireNonNull(resultActions.andReturn().getResolvedException())
-                        .getClass());
-        assertTrue(Objects.requireNonNull(resultActions.andReturn().getResolvedException())
-                .getMessage().contains("User with " + numberPhone + " doesn`t exist"));
+        verify(userService, times(1)).findByPhone(numberPhone);
     }
+
 
     private User getNewUser() {
         return new User(0, null, "test", "test@mail.com", "+7937-123-45-67", "Penza", LocalDate.parse("1999-12-11"));

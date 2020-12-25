@@ -5,6 +5,8 @@ import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.models.Account;
 import com.max.littlebank.models.Transfer;
 import com.max.littlebank.service.AccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -25,43 +27,49 @@ public class AccountController {
     }
 
     @GetMapping("/{id}")
-    public List<Account> findAllByOwner_Id(@PathVariable long id) {
-        return accountService.findAllByOwner_Id(id);
+    public ResponseEntity<List<Account>> findAllByOwner_Id(@PathVariable long id) {
+        List<Account> accounts = accountService.findAllByOwner_Id(id);
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
     @GetMapping
-    public List<Account> showAllAccounts() {
-        return accountService.showAllAccounts();
+    public ResponseEntity<List<Account>> showAllAccounts() {
+        List<Account> accounts = accountService.showAllAccounts();
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     ResponseEntity<String> deleteAllByOwner_Id(@PathVariable long id) {
         accountService.deleteAllByOwner_Id(id);
-        return ResponseEntity.ok("Accounts with Owner_Id = " + id + " was deleted");
+        return new ResponseEntity<>("Accounts with Owner_Id = " + id + " was deleted",
+                HttpStatus.NO_CONTENT);
     }
 
     @PostMapping
-    ResponseEntity<String>  saveAccount(@RequestBody AccountDTO accountDTO) {
+    ResponseEntity<String> saveAccount(@RequestBody AccountDTO accountDTO) {
         Account account = new Account(accountDTO);
         accountService.saveAccount(account);
-        return ResponseEntity.ok("Account was created");
+        return new ResponseEntity<>("Account was created", HttpStatus.CREATED);
     }
 
     @PutMapping("/transfer")
     ResponseEntity<String> betweenAccountsTransfer(@RequestBody Transfer transfer) {
         accountService.betweenAccountsTransfer(transfer);
-        return ResponseEntity.ok("Cash transfer transactions completed");
+        return new ResponseEntity<>("Cash transfer transactions completed",
+                HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/withdraw")
     ResponseEntity<String> withdrawAccount(@RequestBody Transfer transfer) {
         accountService.withdrawAccount(transfer);
-        return ResponseEntity.ok("Withdrawals have been completed");
+        return new ResponseEntity<>("Withdrawals have been completed",
+                HttpStatus.ACCEPTED);
     }
 
     @PutMapping("/obtain")
     ResponseEntity<String> obtainAccount(@RequestBody Transfer transfer) {
         accountService.obtainAccount(transfer);
-        return ResponseEntity.ok("Obtain have been completed");
+        return new ResponseEntity<>("Obtain have been completed",
+                HttpStatus.ACCEPTED);
     }
 }

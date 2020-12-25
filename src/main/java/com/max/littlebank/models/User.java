@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.sql.Blob;
 import java.time.LocalDate;
 
 /**
@@ -29,7 +28,7 @@ public class User {
 
     @Lob
     @Column(name = "image")
-    private Blob image;
+    private byte[] image;
 
     @NotBlank(message = "Name is mandatory")
     @Size(min = 2, message = "name must be min 2 symbols")

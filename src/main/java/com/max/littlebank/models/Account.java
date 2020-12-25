@@ -45,6 +45,14 @@ public class Account {
         this.amount = amount;
     }
 
+    public Account(long accountNumber, BigDecimal amount, LocalDateTime openingDate, LocalDateTime validityPeriod, User owner) {
+        this.accountNumber = accountNumber;
+        this.amount = amount;
+        this.openingDate = openingDate;
+        this.validityPeriod = validityPeriod;
+        this.owner = owner;
+    }
+
     public Account(AccountDTO accountDTO) {
         this.accountNumber = accountDTO.getAccountNumber();
         this.amount = accountDTO.getAmount();

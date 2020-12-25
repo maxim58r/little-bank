@@ -4,13 +4,10 @@ import com.max.littlebank.dao.AccountDaoJpa;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
 import com.max.littlebank.exeption_handing.TransferException;
 import com.max.littlebank.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public void withdrawAccount(Transfer transfer) {
+    public boolean withdrawAccount(Transfer transfer) {
         Account account = findById(transfer.getTransferFromId());
         Transaction transaction = getTransaction(account,
                 transfer.getAmount(),
@@ -102,6 +99,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (account.getAmount().signum() >= 0) {
             transactionService.saveTransaction(transaction);
+            return true;
         } else {
             throw new TransferException("Insufficient funds on the account");
         }
