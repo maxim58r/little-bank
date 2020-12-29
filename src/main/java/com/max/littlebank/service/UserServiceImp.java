@@ -2,7 +2,6 @@ package com.max.littlebank.service;
 
 import com.max.littlebank.repository.UserRepositoryJpa;
 import com.max.littlebank.exeption_handing.NoSuchUserException;
-import com.max.littlebank.exeption_handing.UserIncorrectDataEntryException;
 import com.max.littlebank.models.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +25,15 @@ public class UserServiceImp implements UserService {
     @Override
     public User saveUser(User user) {
         user.setId(0);
-        if (findByFullname(user.getFullname()) == null ||
-                findByEmail(user.getEmail()) == null ||
-                findByPhone(user.getPhone()) == null) {
-            return userRepositoryJpa.save(user);
-        } else {
-            throw new UserIncorrectDataEntryException("A user exist in DataBase");
+        try {
+            findByFullname(user.getFullname());
+            findByEmail(user.getEmail());
+            findByPhone(user.getPhone());
+        } catch (NoSuchUserException e) {
+            userRepositoryJpa.save(user);
+            return user;
         }
+        throw new NoSuchUserException("A user with the same name, email or phone number already exists");
     }
 
     @Transactional
@@ -50,7 +51,7 @@ public class UserServiceImp implements UserService {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            throw new NoSuchUserException("User with " + id + " doesn`t exist");
+            throw new NoSuchUserException("User with id " + id + " doesn`t exist");
         }
         return user;
     }
@@ -62,7 +63,7 @@ public class UserServiceImp implements UserService {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            throw new NoSuchUserException("User with " + numberPhone + " doesn`t exist");
+            throw new NoSuchUserException("User with Phone " + numberPhone + " doesn`t exist");
         }
         return user;
     }
@@ -70,11 +71,11 @@ public class UserServiceImp implements UserService {
     @Override
     public User findByFullname(String fullname) {
         User user;
-        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByFullname(fullname));
+        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByFullname(fullname.toLowerCase()));
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            throw new NoSuchUserException("User with " + fullname + " doesn`t exist");
+            throw new NoSuchUserException("User with fullname " + fullname + " doesn`t exist");
         }
         return user;
     }
@@ -86,7 +87,7 @@ public class UserServiceImp implements UserService {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            throw new NoSuchUserException("User with " + email + " doesn`t exist");
+            throw new NoSuchUserException("User with email " + email + " doesn`t exist");
         }
         return user;
     }

@@ -1,6 +1,7 @@
 package com.max.littlebank.models;
 
 import com.max.littlebank.DTO.AccountDTO;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "accounts")
 public class Account {

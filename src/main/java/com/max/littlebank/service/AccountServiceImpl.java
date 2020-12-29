@@ -27,12 +27,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Transactional
     @Override
-    public void saveAccount(Account account) {
+    public Account saveAccount(Account account) {
         account.setAccountNumber(0);
         account.setAmount(BigDecimal.ZERO);
         account.setOpeningDate(null);
         account.setValidityPeriod(null);
-        accountRepositoryJpa.save(account);
+        return accountRepositoryJpa.save(account);
     }
 
     @Transactional
@@ -97,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
         account.setAmount(account.getAmount().subtract(transfer.getAmount()));
 
         if (account.getAmount().signum() >= 0) {
-            transactionService.saveTransaction(transaction);
+             transactionService.saveTransaction(transaction);
             return true;
         } else {
             throw new TransferException("Insufficient funds on the account");
@@ -118,16 +118,14 @@ public class AccountServiceImpl implements AccountService {
 
     private Transaction getTransaction(Account account, BigDecimal amount, TransactionType type) {
         Transaction transaction = new Transaction();
+        transaction.setType(type.toString());
+        transaction.setAccount(account);
 
         if (type.toString().equals("WITHDRAW")) {
-            transaction.setType(type.toString());
             transaction.setAmount(amount.negate());
-            transaction.setAccount(account);
 
         } else if (type.toString().equals("OBTAIN")) {
-            transaction.setType(type.toString());
             transaction.setAmount(amount);
-            transaction.setAccount(account);
         }
         return transaction;
     }

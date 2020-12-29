@@ -9,7 +9,7 @@ import java.util.List;
  * @author Serov Maxim
  */
 public interface AccountService {
-    void saveAccount(Account account);
+    Account saveAccount(Account account);
 
     Account findById(long id);
 

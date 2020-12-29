@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -45,11 +46,11 @@ public class TransactionServiceImpl implements TransactionService {
     @SneakyThrows
     @Override
     public List<Transaction> findByTransactionBetweenDate(String startDate, String endDate) {
-        LocalDateTime localStartDate = LocalDateTime.parse(startDate);
-        LocalDateTime localEndDate = LocalDateTime.parse(endDate);
-        return transactionRepositoryJpa.findByDateTimeBetween(localStartDate,
-                localEndDate);
+        LocalDate localStart = LocalDate.parse(startDate);
+        LocalDateTime localDateTimeStart = localStart.atStartOfDay();
+        LocalDate localEnd = LocalDate.parse(endDate);
+        LocalDateTime localDateTimeEnd = localEnd.atTime(23,59);
+        return transactionRepositoryJpa.findByDateTimeBetween(localDateTimeStart,
+                localDateTimeEnd);
     }
-
-
 }

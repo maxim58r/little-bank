@@ -75,9 +75,4 @@ public class UserControllerTestRestTemplate {
         JsonNode jsonNode = jsonTree.get("errorMessage");
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
-
-
-    private User getNewUser() {
-        return new User(0, null, "test", "test@mail.com", "+7937-123-45-67", "Penza", LocalDate.parse("1999-12-11"));
-    }
 }

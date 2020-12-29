@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Repository
 public interface TransactionRepositoryJpa extends JpaRepository<Transaction, Long> {
+
     List<Transaction> findByDateTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
      void deleteAllByAccount_AccountNumber(long accountNumber);

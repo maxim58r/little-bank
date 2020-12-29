@@ -1,15 +1,14 @@
 package com.max.littlebank.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.max.littlebank.repository.UserRepositoryJpa;
 import com.max.littlebank.models.User;
-import com.max.littlebank.service.AccountService;
 import com.max.littlebank.service.StorageService;
 import com.max.littlebank.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,54 +28,51 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author Serov Maxim
  */
-@ActiveProfiles("test")
+@ActiveProfiles("test-user-controller")
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    StorageService storageService;
+    private UserService userService;
 
     @MockBean
-    UserService userService;
-
-    @MockBean
-    AccountService accountService;
-
-    @MockBean
-    UserRepositoryJpa userRepositoryJpa;
+    private StorageService storageService;
 
     @Test
     public void get_allUsers_returnsOkWithListOfUsers() throws Exception {
+        when(userService.findAll()).thenReturn(getNewListUsers());
 
-        Mockito.when(userService.findAll()).thenReturn(getNewListUsers());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/users").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(3)))
+        this.mockMvc.perform(get("/users")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].email", is("test@mail.ru")))
                 .andExpect(jsonPath("$[0].phone", is("+7937-123-45-67")))
                 .andExpect(jsonPath("$[1].fullname", is("max")))
                 .andExpect(jsonPath("$[1].dateOfBirth", is("2005-10-25")))
-                .andExpect(jsonPath("$[2].address", is("Saint-Petersburg")));
+                .andExpect(jsonPath("$[2].address", is("saint-Petersburg")));
     }
 
     @Test
     public void post_saveNewUser() throws Exception {
         User user = getNewUser();
 
-        Mockito.when(userService.saveUser(Mockito.any(User.class))).thenReturn(user);
+        when(userService.saveUser(Mockito.any(User.class))).thenReturn(user);
         userService.saveUser(user);
 
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/users")
@@ -84,7 +80,7 @@ class UserControllerTest {
                 .characterEncoding("UTF-8").content(this.objectMapper.writeValueAsBytes(user));
 
         mockMvc.perform(builder).andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email", is("test@mail.com")))
+                .andExpect(jsonPath("$.email", is("test@mail.ru")))
                 .andExpect(MockMvcResultMatchers.content().string(this.objectMapper.writeValueAsString(user)));
     }
 
@@ -104,21 +100,6 @@ class UserControllerTest {
                 .andReturn().getResolvedException()).getMessage().contains("Name is mandatory"));
     }
 
-    @Test
-    public void put_updatesAndReturnsUpdatedObjWith202() throws Exception {
-        User user = getNewUser();
-
-        Mockito.when(userService.updateUser(user)).thenReturn(user);
-
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
-                .put("/users", user).contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON).characterEncoding("UTF-8")
-                .content(this.objectMapper.writeValueAsBytes(user));
-
-        mockMvc.perform(builder).andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.fullname", is("test")))
-                .andExpect(MockMvcResultMatchers.content().string(this.objectMapper.writeValueAsString(user)));
-    }
 
     @Test
     public void delete_deleteUser_Returns204Status() throws Exception {
@@ -127,7 +108,7 @@ class UserControllerTest {
         UserService serviceSpy = Mockito.spy(userService);
         doNothing().when(serviceSpy).deleteById(userId);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/users/1")
+        this.mockMvc.perform(delete("/users/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -139,10 +120,10 @@ class UserControllerTest {
     public void get_userByPhone_Returns200Status() throws Exception {
         String numberPhone = "+7937-123-45-67";
 
-        Mockito.when(userService.findByPhone(numberPhone))
+        when(userService.findByPhone(numberPhone))
                 .thenReturn(getNewUser());
 
-        mockMvc.perform(MockMvcRequestBuilders
+        this.mockMvc.perform(MockMvcRequestBuilders
                 .get("/users/phone/" + numberPhone).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -151,20 +132,50 @@ class UserControllerTest {
 
 
     private User getNewUser() {
-        return new User(0, null, "test", "test@mail.com", "+7937-123-45-67", "Penza", LocalDate.parse("1999-12-11"));
+        return User.builder()
+                .id(0)
+                .fullname("test")
+                .email("test@mail.ru")
+                .phone("+7937-123-45-67")
+                .address("penza")
+                .dateOfBirth(LocalDate.parse("1999-12-11")).build();
     }
 
     private User getNewUserWithEmptyFieldFullname() {
-        return new User(0, null, "", "test@mail.com", "+7937-123-45-67", "Penza", LocalDate.parse("1999-12-11"));
+        return User.builder()
+                .id(0)
+                .fullname("")
+                .email("test@mail.ru")
+                .phone("+7937-123-45-67")
+                .address("penza")
+                .dateOfBirth(LocalDate.parse("1999-12-11")).build();
     }
 
     private List<User> getNewListUsers() {
         List<User> users = new ArrayList<>();
-        users.add(new User(0, null, "test", "test@mail.ru", "+7937-123-45-67", "Penza", LocalDate.parse("1999-12-11")));
-        users.add(new User(1, null, "max", "max@gmail.com", "+7927-412-45-55", "New-York", LocalDate.parse("2005-10-25")));
-        users.add(new User(2, null, "alex", "alex@yandex.ru", "+7902-444-45-11", "Saint-Petersburg", LocalDate.parse("1982-12-13")));
+        users.add(User.builder()
+                .id(0)
+                .fullname("test")
+                .email("test@mail.ru")
+                .phone("+7937-123-45-67")
+                .address("penza")
+                .dateOfBirth(LocalDate.parse("1999-12-11")).build());
+
+        users.add(User.builder()
+                .id(1)
+                .fullname("max")
+                .email("max@gmail.com")
+                .phone("+7927-412-45-55")
+                .address("new-York")
+                .dateOfBirth(LocalDate.parse("2005-10-25")).build());
+
+        users.add(User.builder()
+                .id(2)
+                .fullname("alex")
+                .email("alex@yandex.ru")
+                .phone("+7902-444-45-11")
+                .address("saint-Petersburg")
+                .dateOfBirth(LocalDate.parse("1982-12-13")).build());
         return users;
     }
-
-
 }

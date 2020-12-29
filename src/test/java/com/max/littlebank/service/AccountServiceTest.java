@@ -1,16 +1,11 @@
-package com.max.littlebank.controller;
+package com.max.littlebank.service;
 
-import com.max.littlebank.controller.AccountController;
-import com.max.littlebank.models.Account;
-import com.max.littlebank.models.User;
-import com.max.littlebank.service.AccountService;
+import com.max.littlebank.models.*;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,39 +13,50 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Serov Maxim
  */
 
-@ActiveProfiles("test_account_controller")
-@WebMvcTest(AccountController.class)
-public class AccountControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+@SpringBootTest
+public class AccountServiceTest {
 
     @MockBean
     private AccountService accountService;
 
+    @MockBean
+    private TransactionService transactionService;
 
     @Test
-    public void get_showAllAccounts_returnsOkWithListOfAccounts() throws Exception {
-        when(accountService.showAllAccounts()).thenReturn(getNewListAccounts());
+    public void saveAccount() {
+        Account account = getNewListAccounts().get(0);
+        given(accountService.saveAccount(account)).willReturn(account);
 
-        this.mockMvc.perform(get("/accounts")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].amount", is(1000)))
-                .andExpect(jsonPath("$[1].amount", is(2000)))
-                .andExpect(jsonPath("$[2].amount", is(3000)));
+        Account savedAccount = accountService.saveAccount(account);
+        assertEquals(account, savedAccount);
     }
+
+    @Test
+    public void deleteAccount() {
+
+
+    }
+
+    @Test
+    public void withdrawAccount() {
+         var transfer = getTransferFromId();
+
+        given(accountService.withdrawAccount(transfer)).willReturn(true);
+        boolean isWithdrawAccount = accountService.withdrawAccount(transfer);
+
+        assertTrue(isWithdrawAccount);
+//        verify(transactionService, times(1)).saveTransaction();
+
+    }
+
 
     private List<Account> getNewListAccounts() {
         List<Account> accounts = new ArrayList<>();
@@ -103,5 +109,31 @@ public class AccountControllerTest {
                 .address("saint-Petersburg")
                 .dateOfBirth(LocalDate.parse("1982-12-13")).build());
         return users;
+    }
+
+    private Transfer getTransferFromId() {
+        return Transfer.builder().transferFromId(0).amount(BigDecimal.valueOf(300)).build();
+    }
+
+    private Transfer getTransferToId() {
+        return Transfer.builder().transferToId(1).amount(BigDecimal.valueOf(500)).build();
+    }
+
+    private Transfer betweenAccountsTransfer() {
+        return Transfer.builder().transferFromId(0).transferToId(1).amount(BigDecimal.valueOf(500)).build();
+    }
+
+    private Transaction getTransaction(Account account, BigDecimal amount, TransactionType type) {
+        Transaction transaction = new Transaction();
+        transaction.setType(type.toString());
+        transaction.setAccount(account);
+
+        if (type.toString().equals("WITHDRAW")) {
+            transaction.setAmount(amount.negate());
+
+        } else if (type.toString().equals("OBTAIN")) {
+            transaction.setAmount(amount);
+        }
+        return transaction;
     }
 }

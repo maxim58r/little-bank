@@ -3,7 +3,6 @@ package com.max.littlebank.service;
 import com.max.littlebank.models.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
     User saveUser(User user);

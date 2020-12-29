@@ -51,4 +51,13 @@ public class User {
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
+
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname.toLowerCase();
+    }
+
+    public void setAddress(String address) {
+        this.address = address.toLowerCase();
+    }
 }

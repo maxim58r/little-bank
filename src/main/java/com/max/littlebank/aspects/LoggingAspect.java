@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class LoggingAspect {
 
-    @Before("execution(public String com.max.littlebank.controller.UserController.deleteAccountById(Long))")
+    @Before("execution(public String com.max.littlebank.controller.UserController.deleteById(Long))")
     public void beforeShowUsersAdvice() {
         System.out.println("beforeShowUsersAdvice: attempt update user");
     }
