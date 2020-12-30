@@ -32,7 +32,7 @@ public class TransactionController {
     }
 
 
-    @GetMapping("/{startDate}/{endDate}") //"yyyy-MM-ddThh:mm:ss"  2007-12-03T10:15:30
+    @GetMapping("/{startDate}/{endDate}") //"yyyy-MM-dd"  2007-12-03
     public List<Transaction> showAllTransactionsByDate(@PathVariable String startDate,
                                                        @PathVariable String endDate) {
         return transactionService.findByTransactionBetweenDate(startDate, endDate);
