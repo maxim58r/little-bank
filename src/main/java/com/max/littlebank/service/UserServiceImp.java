@@ -46,50 +46,26 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findById(long id) {
-        User user;
-        Optional<User> optionalUser = userRepositoryJpa.findById(id);
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        } else {
-            throw new NoSuchUserException("User with id " + id + " doesn`t exist");
-        }
-        return user;
+        return Optional.of(userRepositoryJpa.findById(id)).get()
+                .orElseThrow(() -> new NoSuchUserException("User with id " + id + " doesn`t exist"));
     }
 
     @Override
     public User findByPhone(String numberPhone) {
-        User user;
-        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByPhone(numberPhone));
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        } else {
-            throw new NoSuchUserException("User with Phone " + numberPhone + " doesn`t exist");
-        }
-        return user;
+        return Optional.ofNullable(userRepositoryJpa.findByPhone(numberPhone))
+                .orElseThrow(() -> new NoSuchUserException("User with Phone " + numberPhone + " doesn`t exist"));
     }
 
     @Override
     public User findByFullname(String fullname) {
-        User user;
-        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByFullname(fullname.toLowerCase()));
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        } else {
-            throw new NoSuchUserException("User with fullname " + fullname + " doesn`t exist");
-        }
-        return user;
+        return Optional.ofNullable(userRepositoryJpa.findByFullname(fullname.toLowerCase()))
+                .orElseThrow(() -> new NoSuchUserException("User with fullname " + fullname + " doesn`t exist"));
     }
 
     @Override
     public User findByEmail(String email) {
-        User user;
-        Optional<User> optionalUser = Optional.ofNullable(userRepositoryJpa.findByEmail(email));
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-        } else {
-            throw new NoSuchUserException("User with email " + email + " doesn`t exist");
-        }
-        return user;
+        return Optional.ofNullable(userRepositoryJpa.findByEmail(email))
+                .orElseThrow(() -> new NoSuchUserException("User with email " + email + " doesn`t exist"));
     }
 
     @Transactional

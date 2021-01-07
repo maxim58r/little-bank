@@ -70,14 +70,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account findById(long id) {
-        Account account;
-        Optional<Account> optionalAccount = accountRepositoryJpa.findById(id);
-        if (optionalAccount.isPresent()) {
-            account = optionalAccount.get();
-        } else {
-            throw new NoSuchUserException("There is no user with account = " + id + " in DataBase");
-        }
-        return account;
+        return Optional.of(accountRepositoryJpa.findById(id)).get()
+                .orElseThrow(() -> new NoSuchUserException("There is no user with account = " + id + " in DataBase"));
     }
 
     @Transactional
@@ -97,7 +91,7 @@ public class AccountServiceImpl implements AccountService {
         account.setAmount(account.getAmount().subtract(transfer.getAmount()));
 
         if (account.getAmount().signum() >= 0) {
-             transactionService.saveTransaction(transaction);
+            transactionService.saveTransaction(transaction);
             return true;
         } else {
             throw new TransferException("Insufficient funds on the account");

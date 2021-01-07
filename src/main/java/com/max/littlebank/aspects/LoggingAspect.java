@@ -28,6 +28,5 @@ public class LoggingAspect {
         System.out.println("End of " + methodName);
         return targetMethodResult;
     }
-
 }
 
