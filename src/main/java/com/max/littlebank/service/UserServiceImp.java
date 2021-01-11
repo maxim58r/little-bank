@@ -46,7 +46,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User findById(long id) {
-        return Optional.of(userRepositoryJpa.findById(id)).get()
+        return userRepositoryJpa.findById(id)
                 .orElseThrow(() -> new NoSuchUserException("User with id " + id + " doesn`t exist"));
     }
 
